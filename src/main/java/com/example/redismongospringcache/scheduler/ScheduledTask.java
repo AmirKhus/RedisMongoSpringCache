@@ -21,9 +21,8 @@ public class ScheduledTask implements ScheduledService {
     CurrencyRateService currencyRateService;
 
     @Override
-    @Scheduled(cron = "* 11 16 * * 1,2,3,4,5", zone = "Europe/Moscow")
+    @Scheduled(cron = "* 10 16 * * 1,2,3,4,5", zone = "Europe/Moscow")
     public void schedule() {
-
         log.info("Start schedule for check update currency rate");
         List<String> currency = Arrays.stream(CurrencyEnum.values())
                 .map(Enum::name)

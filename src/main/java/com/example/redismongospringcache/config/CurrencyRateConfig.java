@@ -1,12 +1,19 @@
 package com.example.redismongospringcache.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.cache.RedisCacheWriter;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisClientConfiguration.JedisClientConfigurationBuilder;
@@ -22,53 +29,24 @@ import java.time.Duration;
 @Configuration
 @EnableScheduling
 @EnableRedisRepositories
+@EnableCaching
 //@EnableMongoRepositories
-public class CurrencyRateConfig extends CachingConfigurerSupport{
-
-    @Value(value="${spring.data.redis.host}")
-    private String host;
-
-    @Value(value="${spring.data.redis.port}")
-    private String port;
-
+public class CurrencyRateConfig{
+    /**
+     * Creates a Redis cache manager.
+     *
+     * @param connectionFactory factory for connecting to Redis
+     * @return Redis cache manager
+     */
     @Bean
-    JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(host);
-        redisStandaloneConfiguration.setPort(Integer.valueOf(port));
-
-        JedisClientConfigurationBuilder jedisClientConfiguration = JedisClientConfiguration.builder();
-
-        JedisConnectionFactory jedisConFactory = new JedisConnectionFactory(redisStandaloneConfiguration,
-                jedisClientConfiguration.build());
-
-        return jedisConFactory;
-    }
-
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(jedisConnectionFactory());
-        return template;
-    }
-
-
-    @Bean
-    public RedisCacheConfiguration cacheConfiguration() {
-        return RedisCacheConfiguration
+    public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
+        RedisCacheWriter cacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory);
+        RedisCacheConfiguration configuration = RedisCacheConfiguration
                 .defaultCacheConfig()
-                .entryTtl(Duration.ofDays(1))
-                .serializeValuesWith(RedisSerializationContext
-                        .SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer()));
-    }
+                .entryTtl(Duration.ofMinutes(20));
 
-    @Bean
-    public RedisCacheManager cacheManager() {
-        RedisCacheManager rcm = RedisCacheManager.builder(jedisConnectionFactory())
-                .cacheDefaults(cacheConfiguration())
-                .transactionAware()
+        return RedisCacheManager.builder(cacheWriter)
+                .cacheDefaults(configuration)
                 .build();
-        return rcm;
     }
 }

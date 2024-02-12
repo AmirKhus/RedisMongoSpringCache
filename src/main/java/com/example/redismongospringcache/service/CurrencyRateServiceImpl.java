@@ -1,5 +1,6 @@
 package com.example.redismongospringcache.service;
 
+import com.example.redismongospringcache.caching.CachingService;
 import com.example.redismongospringcache.model.CurrencyRate;
 import com.example.redismongospringcache.parser.service.CurrencyRateParserService;
 import com.example.redismongospringcache.repository.CurrencyRateDBRepository;
@@ -21,31 +22,57 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
     @Autowired
     @Qualifier("redisTemplate")
     private RedisTemplate template;
-    public static final String HASH_KEY = "CurrencyRate";
+    @Autowired
+    private CachingService cachingService;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     @Override
     public CurrencyRate save(CurrencyRate currencyRate) {
-        template.opsForHash().put(HASH_KEY, currencyRate.getName(), currencyRate);
-        return currencyRepository.save(currencyRate);
+//        System.out.println(currencyRate);
+//        System.out.println(template.opsForHash().values(currencyRate.getCharCode()));
+        return cachedByValue(currencyRate);
     }
 
     @Override
     public List<CurrencyRate> getAll() {
-        template.opsForHash().values(HASH_KEY);
         return currencyRepository.findAll();
     }
 
     @Override
     public CurrencyRate getByName(String currencyRateByName) {
-        template.opsForHash().get(HASH_KEY, currencyRateByName);
         return currencyRepository.findByName(currencyRateByName) != null ? currencyRepository.findByName(currencyRateByName) : null;
     }
 
     @Override
-    @Cacheable(value = "currencyRate", key = "#currencyName")
+//    @Cacheable(va)
     public CurrencyRate updatingDataInDBToTheParser(String currencyName) {
         CurrencyRate currencyRate = currencyRateParserService.getCurrencyRate(currencyName, LocalDate.now());
-        template.opsForHash().put(HASH_KEY, currencyRate.getCharCode(), currencyRate);
-        return currencyRepository.save(currencyRate);
+        return cachedByValue(currencyRate);
+//        return currencyRepository.save(currencyRate);
+    }
+
+    public CurrencyRate cachedByValue(CurrencyRate currencyRate) {
+        return switch (currencyRate.getCharCode()) {
+            case "USD" -> cachingService.cachedUSD(currencyRate);
+            case "EUR" -> cachingService.cachedEUR(currencyRate);
+            case "GBP" -> cachingService.cachedGBP(currencyRate);
+            case "JPY" -> cachingService.cachedJPY(currencyRate);
+            case "AUD" -> cachingService.cachedAUD(currencyRate);
+            case "CAD" -> cachingService.cachedCAD(currencyRate);
+            case "CHF" -> cachingService.cachedCHF(currencyRate);
+            case "CNY" -> cachingService.cachedCNY(currencyRate);
+            case "SEK" -> cachingService.cachedSEK(currencyRate);
+            case "NZD" -> cachingService.cachedNZD(currencyRate);
+            case "SGD" -> cachingService.cachedSGD(currencyRate);
+            case "HKD" -> cachingService.cachedHKD(currencyRate);
+            case "NOK" -> cachingService.cachedNOK(currencyRate);
+            case "KRW" -> cachingService.cachedKRW(currencyRate);
+            case "TRY" -> cachingService.cachedTRY(currencyRate);
+            case "INR" -> cachingService.cachedINR(currencyRate);
+            case "BRL" -> cachingService.cachedBRL(currencyRate);
+            case "ZAR" -> cachingService.cachedZAR(currencyRate);
+            default -> throw new IllegalArgumentException("Unsupported currency: " + currencyRate.getCharCode());
+        };
     }
 }
