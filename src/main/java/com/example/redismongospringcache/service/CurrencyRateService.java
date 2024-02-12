@@ -12,4 +12,6 @@ public interface CurrencyRateService {
     CurrencyRate getByName(String currencyRateByName);
 
     void updatingDataInDBToTheParser(List<CurrencyRate> currency);
+
+    void delete(String id);
 }

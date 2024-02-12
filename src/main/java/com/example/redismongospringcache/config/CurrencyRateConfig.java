@@ -31,7 +31,7 @@ public class CurrencyRateConfig {
         RedisCacheWriter cacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory);
         RedisCacheConfiguration configuration = RedisCacheConfiguration
                 .defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(20));
+                .entryTtl(Duration.ofDays(7));
 
         return RedisCacheManager.builder(cacheWriter)
                 .cacheDefaults(configuration)

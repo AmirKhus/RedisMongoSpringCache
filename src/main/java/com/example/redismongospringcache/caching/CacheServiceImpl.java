@@ -1,4 +1,4 @@
-package com.example.redismongospringcache.service;
+package com.example.redismongospringcache.caching;
 
 import com.example.redismongospringcache.model.CurrencyRate;
 import lombok.RequiredArgsConstructor;
@@ -19,5 +19,13 @@ public class CacheServiceImpl implements CacheService {
         assert cache != null;
         cache.put(currencyRate.getId(), currencyRate);
         return currencyRate;
+    }
+
+    @Override
+    public void delete(String id) {
+        log.info("delete in cache - " + id);
+        var cache = manager.getCache("CurrencyRate");
+        assert cache != null;
+        cache.evict(id);
     }
 }

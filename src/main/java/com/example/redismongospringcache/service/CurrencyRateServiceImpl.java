@@ -1,5 +1,6 @@
 package com.example.redismongospringcache.service;
 
+import com.example.redismongospringcache.caching.CacheService;
 import com.example.redismongospringcache.model.CurrencyRate;
 import com.example.redismongospringcache.repository.CurrencyRateDBRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,12 @@ public class CurrencyRateServiceImpl implements CurrencyRateService {
     @Override
     public void updatingDataInDBToTheParser(List<CurrencyRate> currency) {
         currency.forEach(this::cachedByValue);
+    }
+
+    @Override
+    public void delete(String id) {
+        service.delete(id);
+        currencyRepository.deleteById(id);
     }
 
     CurrencyRate cachedByValue(CurrencyRate currencyRate) {

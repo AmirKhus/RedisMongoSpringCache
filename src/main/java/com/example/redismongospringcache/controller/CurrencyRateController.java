@@ -1,12 +1,14 @@
 package com.example.redismongospringcache.controller;
 
 import com.example.redismongospringcache.model.CurrencyRate;
+import com.example.redismongospringcache.scheduler.ScheduledService;
 import com.example.redismongospringcache.service.CurrencyRateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 public class CurrencyRateController {
 
     private final CurrencyRateService currencyRateService;
-
+    private final ScheduledService service;
 
 
     @PostMapping("/currencyRate")
@@ -34,29 +36,23 @@ public class CurrencyRateController {
         return currencyRateService.getAll();
     }
 
-    @GetMapping("/getCurrencyRateByName")
-    @Cacheable(key = "#name")
-    public CurrencyRate getCurrencyRateByName(@RequestParam String name) {
-        log.info("GetMapping request '/getCurrencyRateByName' get Currency Rates for name -> {}", name);
-        return currencyRateService.getByName(name);
+    @GetMapping("/getCurrencyRateByName/{id}")
+    @Cacheable(key = "#id")
+    public CurrencyRate getCurrencyRateByName(@PathVariable String id) {
+        log.info("GetMapping request '/getCurrencyRateByName' get Currency Rates for name -> {}", id);
+        return currencyRateService.getByName(id);
     }
 
-    @PutMapping("/updateCurrencyRate")
-    @Cacheable(key = "#currencyRate.charCode")
-    public CurrencyRate updateCurrencyRate(@RequestBody CurrencyRate currencyRate) {
-        log.info("GetMapping request '/updateCurrencyRate'  with body -> {}", currencyRate);
-        return currencyRateService.save(currencyRate);
+    @RequestMapping(value = "/updateCurrencyRate", method = RequestMethod.PATCH)
+    public ResponseEntity<HttpStatus> updateCurrencyRateAll() {
+        log.info("PATH request");
+        service.schedule();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @CacheEvict(cacheNames = "USD")
-    @GetMapping("/clear")
-    public void clearCache() {
-        log.info("clear cache");
-//        List<String> currency = Arrays.stream(CurrencyEnum.values())
-//                .map(Enum::name)
-//                .collect(Collectors.toList());
-//        for (String currencyName : currency) {
-//            Objects.requireNonNull(cacheManager.getCache(currencyName)).clear();
-//        }
+    @DeleteMapping("/delete/{id}")
+    public void clearCache(@PathVariable String id) {
+        log.info("delete currency from key = " + id);
+        currencyRateService.delete(id);
     }
 }
