@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +19,6 @@ public class CurrencyRateController {
 
     private final CurrencyRateService currencyRateService;
 
-    private final ApplicationContext applicationContext;
 
 
     @PostMapping("/currencyRate")
@@ -47,7 +45,6 @@ public class CurrencyRateController {
     @Cacheable(key = "#currencyRate.charCode")
     public CurrencyRate updateCurrencyRate(@RequestBody CurrencyRate currencyRate) {
         log.info("GetMapping request '/updateCurrencyRate'  with body -> {}", currencyRate);
-        applicationContext.getBean("cacheManager");
         return currencyRateService.save(currencyRate);
     }
 

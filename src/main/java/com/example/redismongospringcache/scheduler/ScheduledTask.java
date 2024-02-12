@@ -16,7 +16,7 @@ public class ScheduledTask implements ScheduledService {
     private final CurrencyRateParserService currencyRateParser;
 
     @Override
-    @Scheduled(cron = "0 1 15 * * ?", zone = "Europe/Moscow")
+    @Scheduled(cron = "0 1 15 * * 1,2,3,4,5", zone = "Europe/Moscow")
     public void schedule() {
         log.info("Start schedule for check update currency rate");
         var currencies = currencyRateParser.getAllCurrenciesRateByDefaultURL();
