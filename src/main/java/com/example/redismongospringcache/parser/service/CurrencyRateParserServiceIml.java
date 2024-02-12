@@ -2,12 +2,10 @@ package com.example.redismongospringcache.parser.service;
 
 import com.example.redismongospringcache.model.CurrencyRate;
 import com.example.redismongospringcache.parser.parser.CurrencyRateParser;
-import com.example.redismongospringcache.parser.parser.CurrencyRateParserXml;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -18,12 +16,12 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CurrencyRateParserServiceIml implements CurrencyRateParserService {
     @Value("${parse.dateFormat}")
     private String DATE_FORMAT;
 
-    @Autowired
-    private CurrencyRateParser currencyRateParser = new CurrencyRateParserXml();
+    private final CurrencyRateParser currencyRateParser;
 
 
     @Value("${parse.url}")
@@ -60,5 +58,11 @@ public class CurrencyRateParserServiceIml implements CurrencyRateParserService {
             log.error("cbr request error, url:{}", url, ex);
             throw new RuntimeException(ex);
         }
+    }
+
+    public List<CurrencyRate> getAllCurrenciesRateByDefaultURL() {
+        log.info("get currencies by default url");
+        String xml = getRatesAsXml(urlParse);
+        return currencyRateParser.parse(xml);
     }
 }
