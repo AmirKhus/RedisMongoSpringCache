@@ -23,7 +23,11 @@ public class CurrencyRateController {
     private final ScheduledService service;
     private final ExceptionService serviceEx;
 
-
+    /**
+     *
+     * @param currencyRate - валюта для добавления/обновления
+     * @return currencyRate
+     */
     @PostMapping("/currencyRate")
     public CurrencyRate addNewCurrencyRate(@RequestBody CurrencyRate currencyRate) {
         assert currencyRate != null : serviceEx.illegalArgumentException("CurrencyRate is null from addNewCurrencyRate()");
@@ -31,6 +35,10 @@ public class CurrencyRateController {
         return currencyRateService.save(currencyRate);
     }
 
+    /**
+     *
+     * @return - List<CurrencyRate>
+     */
     @GetMapping("/getCurrencyRates")
     @Cacheable()
     public List<CurrencyRate> getCurrencyRates() {
@@ -38,6 +46,11 @@ public class CurrencyRateController {
         return currencyRateService.getAll();
     }
 
+    /**
+     *
+     * @param id - id интересующий валюты
+     * @return - CurrencyRate
+     */
     @GetMapping("/getCurrencyRateByName/{id}")
     @Cacheable(key = "#id")
     public CurrencyRate getCurrencyRateByName(@PathVariable String id) {
@@ -46,6 +59,10 @@ public class CurrencyRateController {
         return currencyRateService.getByName(id);
     }
 
+    /**
+     *
+     * @return - статус выполнения метода
+     */
     @RequestMapping(value = "/updateCurrencyRate", method = RequestMethod.PATCH)
     public ResponseEntity<HttpStatus> updateCurrencyRateAll() {
         log.info("PATH request");
@@ -53,6 +70,10 @@ public class CurrencyRateController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     *
+     * @param id - id для удаления сущности
+     */
     @DeleteMapping("/delete/{id}")
     public void deleteCurrency(@PathVariable String id) {
         assert id != null : serviceEx.illegalArgumentException("CurrencyID is null from clearCacheCurrency()");

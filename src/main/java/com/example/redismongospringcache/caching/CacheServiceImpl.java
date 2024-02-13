@@ -14,6 +14,11 @@ public class CacheServiceImpl implements CacheService {
     private final CacheManager manager;
     private final ExceptionService exceptionService;
 
+    /**
+     *
+     * @param currencyRate - актуальная валюта
+     * @return добавленную валюту
+     */
     @Override
     public CurrencyRate put(CurrencyRate currencyRate) {
         log.info("put in cache - " + currencyRate.toString());
@@ -23,6 +28,10 @@ public class CacheServiceImpl implements CacheService {
         return currencyRate;
     }
 
+    /**
+     *
+     * @param id - id валюты для удаления
+     */
     @Override
     public void delete(String id) {
         log.info("delete in cache - " + id);

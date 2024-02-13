@@ -3,7 +3,9 @@ package com.example.redismongospringcache.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
+/*
+Класс для обработки общих исключений приложения
+ */
 @ControllerAdvice
 public class GlobalExceptionHandlerAssertion {
     @ExceptionHandler(IllegalArgumentException.class)
