@@ -1,7 +1,6 @@
 package com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.controller;
 
-import com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.dto.CurrencyDto;
-import com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.dto.MoexDto;
+import com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.dto.CurrencyPriceMaxAndMinDto;
 import com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.service.MoexService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ public class MoexController {
     @Autowired
     private  final MoexService moexService;
     @GetMapping("/moex/{currencyCod}")
-    public CurrencyDto getPriceCurrency(@PathVariable String currencyCod){
+    public CurrencyPriceMaxAndMinDto getPriceCurrency(@PathVariable String currencyCod){
         return moexService.getCurrencyMinAndMaxPriceInfo(currencyCod);
     }
 }

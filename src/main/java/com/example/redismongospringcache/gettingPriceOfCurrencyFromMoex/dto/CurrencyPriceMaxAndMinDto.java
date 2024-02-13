@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CurrencyDto {
+public class CurrencyPriceMaxAndMinDto {
     private String name;
     private BigDecimal max;
     private BigDecimal min;

@@ -10,8 +10,8 @@ public class MarketData {
     private List<String> columns;
     private List<List<BigDecimal>> data;
 
-    public static CurrencyDto getMoexDtoToCurrencyDto(MarketData marketData) {
-        return new CurrencyDto().builder()
+    public static CurrencyPriceMaxAndMinDto getMoexDtoToCurrencyDto(MarketData marketData) {
+        return new CurrencyPriceMaxAndMinDto().builder()
                 .max(marketData.data.get(0).get(0))
                 .min(marketData.data.get(0).get(1))
                 .build();

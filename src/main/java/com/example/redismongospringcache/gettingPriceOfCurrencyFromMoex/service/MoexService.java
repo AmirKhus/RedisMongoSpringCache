@@ -1,9 +1,9 @@
 package com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.service;
 
-import com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.dto.CurrencyDto;
+import com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.dto.CurrencyPriceMaxAndMinDto;
 
 public interface MoexService {
 
-    CurrencyDto getCurrencyMinAndMaxPriceInfo(String currencyCod);
+    CurrencyPriceMaxAndMinDto getCurrencyMinAndMaxPriceInfo(String currencyCod);
 
 }
