@@ -1,5 +1,6 @@
 package com.example.redismongospringcache.controller;
 
+import com.example.redismongospringcache.exception.ExceptionService;
 import com.example.redismongospringcache.model.CurrencyRate;
 import com.example.redismongospringcache.scheduler.ScheduledService;
 import com.example.redismongospringcache.service.CurrencyRateService;
@@ -10,7 +11,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -21,10 +21,12 @@ public class CurrencyRateController {
 
     private final CurrencyRateService currencyRateService;
     private final ScheduledService service;
+    private final ExceptionService serviceEx;
 
 
     @PostMapping("/currencyRate")
     public CurrencyRate addNewCurrencyRate(@RequestBody CurrencyRate currencyRate) {
+        assert currencyRate != null : serviceEx.illegalArgumentException("CurrencyRate is null from addNewCurrencyRate()");
         log.info("PostMapping request '/currencyRate' with body current {}", currencyRate);
         return currencyRateService.save(currencyRate);
     }
@@ -39,6 +41,7 @@ public class CurrencyRateController {
     @GetMapping("/getCurrencyRateByName/{id}")
     @Cacheable(key = "#id")
     public CurrencyRate getCurrencyRateByName(@PathVariable String id) {
+        assert id != null : serviceEx.illegalArgumentException("CurrencyID is null from getCurrencyRateByName()");
         log.info("GetMapping request '/getCurrencyRateByName' get Currency Rates for name -> {}", id);
         return currencyRateService.getByName(id);
     }
@@ -51,8 +54,10 @@ public class CurrencyRateController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void clearCache(@PathVariable String id) {
+    public void deleteCurrency(@PathVariable String id) {
+        assert id != null : serviceEx.illegalArgumentException("CurrencyID is null from clearCacheCurrency()");
         log.info("delete currency from key = " + id);
         currencyRateService.delete(id);
     }
+
 }
