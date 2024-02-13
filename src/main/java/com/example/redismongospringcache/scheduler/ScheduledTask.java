@@ -15,6 +15,9 @@ public class ScheduledTask implements ScheduledService {
     private final CurrencyRateService currencyRateService;
     private final CurrencyRateParserService currencyRateParser;
 
+    /**
+     * Получаем новые данные каждый будний день в 15:01:00
+     */
     @Override
     @Scheduled(cron = "0 1 15 * * 1,2,3,4,5", zone = "Europe/Moscow")
     public void schedule() {
