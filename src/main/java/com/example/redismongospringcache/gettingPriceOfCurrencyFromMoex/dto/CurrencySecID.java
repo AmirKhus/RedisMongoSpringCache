@@ -1,5 +1,10 @@
 package com.example.redismongospringcache.gettingPriceOfCurrencyFromMoex.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public enum CurrencySecID {
 //    Для примера, нужно будет добавить в зависимости от требуемыз кол-во валют и СВОП или СВОТ
 
@@ -8,13 +13,5 @@ public enum CurrencySecID {
     CNY("CNYRUB_TOM");
 
     private final String secID;
-
-    CurrencySecID(String secID) {
-        this.secID = secID;
-    }
-
-    public String getSecID() {
-        return secID;
-    }
 }
 
